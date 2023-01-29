@@ -1,3 +1,4 @@
+import 'package:demo_shop/providers/cart.dart';
 import 'package:demo_shop/providers/product.dart';
 import 'package:demo_shop/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,13 @@ class ProductItem extends StatelessWidget {
                       product.toggleFavoriteStatus();
                     },
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.shopping_basket),
-                    onPressed: () {},
+                  trailing: Consumer<Cart>(
+                    builder: (ctx, cart, child) => IconButton(
+                      icon: const Icon(Icons.shopping_basket),
+                      onPressed: () {
+                        cart.addItem(product.id, product.price, product.title);
+                      },
+                    ),
                   ),
                   backgroundColor: Colors.black54,
                   title: Text(
