@@ -20,6 +20,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     //final productsContainer = Provider.of<Products>(context, listen: false);
+
+    var _showFavoritesOnly = false;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Demo Shop'),
@@ -41,9 +44,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ],
             onSelected: (FilterOptions value) {
               if (value == FilterOptions.Favorites) {
-                //productsContainer.showFavoritesOnly();
+                _showFavoritesOnly = true;
               } else if (value == FilterOptions.All) {
-                //productsContainer.showAll();
+                _showFavoritesOnly = false;
               } else {
                 //...
               }
