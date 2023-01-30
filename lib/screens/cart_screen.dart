@@ -1,4 +1,5 @@
 import 'package:demo_shop/providers/cart.dart';
+import 'package:demo_shop/providers/orders.dart';
 import 'package:demo_shop/widgets/cart_item.dart' as ci;
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -38,7 +39,11 @@ class CartScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Provider.of<Orders>(context, listen: false).addOrder(
+                          cart.items.values.toList(), cart.totalAmount);
+                      cart.clearCart();
+                    },
                     child: const Text('ORDER NOW'),
                   )
                 ],
@@ -50,6 +55,7 @@ class CartScreen extends StatelessWidget {
             child: ListView.builder(
               itemBuilder: (ctx, i) => ci.CartItem(
                   id: cart.items.values.toList()[i].id,
+                  productId: cart.items.keys.toList()[i],
                   title: cart.items.values.toList()[i].title,
                   quantity: cart.items.values.toList()[i].quantity,
                   price: cart.items.values.toList()[i].price),
