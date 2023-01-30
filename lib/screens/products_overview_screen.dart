@@ -1,63 +1,74 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/material.dart';
-import '../models/product.dart';
-import '../widgets/product_item.dart';
+import 'package:demo_shop/providers/cart.dart';
+import 'package:demo_shop/screens/cart_screen.dart';
+import 'package:demo_shop/widgets/badge.dart';
 
-class ProductsOverviewScreen extends StatelessWidget {
+import '../widgets/products_grid.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+enum FilterOptions {
+  Favorites,
+  All,
+}
+
+class ProductsOverviewScreen extends StatefulWidget {
   ProductsOverviewScreen({super.key});
 
-  final List<Product> loadedProducts = [
-    Product(
-      id: 'p1',
-      title: 'Red Shirt',
-      description: 'A red shirt - it is pretty red!',
-      price: 29.99,
-      imageUrl: 'https://m.media-amazon.com/images/I/61oC5CPd7eL._UX679_.jpg',
-    ),
-    Product(
-      id: 'p2',
-      title: 'Trousers',
-      description: 'A nice pair of trousers.',
-      price: 59.99,
-      imageUrl: 'https://m.media-amazon.com/images/I/61yRUBQInKL._UX679_.jpg',
-    ),
-    Product(
-      id: 'p3',
-      title: 'Yellow Scarf',
-      description: 'Warm and cozy - exactly what you need for the winter.',
-      price: 19.99,
-      imageUrl: 'https://m.media-amazon.com/images/I/81mVtWb8BWL._UX679_.jpg',
-    ),
-    Product(
-      id: 'p4',
-      title: 'A Pan',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl: 'https://m.media-amazon.com/images/I/5144RhX7CvS._SX679_.jpg',
-    ),
-  ];
+  @override
+  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
+}
+
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  var showFavoritesOnly = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Demo Shop'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: FilterOptions.Favorites,
+                child: Text('Only Favorites'),
+              ),
+              const PopupMenuItem(
+                value: FilterOptions.All,
+                child: Text('Show All'),
+              ),
+            ],
+            onSelected: (FilterOptions value) {
+              setState(() {
+                if (value == FilterOptions.Favorites) {
+                  showFavoritesOnly = true;
+                } else if (value == FilterOptions.All) {
+                  showFavoritesOnly = false;
+                } else {
+                  //...
+                }
+              });
+            },
+            icon: const Icon(Icons.more_vert),
+          ),
+          Consumer<Cart>(
+            builder: (_, cart, ch) => Badge(
+              value: cart.itemCount.toString(),
+              color: Colors.red,
+              child: ch!,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.shopping_cart,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
+          ),
+        ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: loadedProducts.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemBuilder: ((ctx, i) => ProductItem(
-            id: loadedProducts[i].id,
-            title: loadedProducts[i].title,
-            imageUrl: loadedProducts[i].imageUrl)),
-      ),
+      body: ProductsGrid(showFavoritesOnly),
     );
   }
 }
