@@ -1,6 +1,6 @@
 # demo_shop
 
-A new Flutter project.
+Demo Flutter project for shopping app. 
 
 ## Getting Started
 
