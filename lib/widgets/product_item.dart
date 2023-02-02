@@ -43,10 +43,16 @@ class ProductItem extends StatelessWidget {
                       arguments: product.id,
                     );
                   },
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
+                  child: Center(
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/loading.gif',
+                      image: product.imageUrl,
+                    ),
                   ),
+                  // child: Image.network(
+                  //   product.imageUrl,
+                  //   fit: BoxFit.cover,
+                  //                ),
                 ),
               ),
             ));
