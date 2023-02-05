@@ -3,8 +3,6 @@ import 'package:demo_shop/screens/edit_product_screen.dart';
 import 'package:demo_shop/widgets/app_drawer.dart';
 import 'package:demo_shop/widgets/user_product_item.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 class UserProductsScreen extends StatelessWidget {

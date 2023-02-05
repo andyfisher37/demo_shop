@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
 
 class Products with ChangeNotifier {
   final List<Product> _items = [
@@ -50,25 +52,28 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  // void showFavoritesOnly() {
-  //   _showFavoritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll() {
-  //   _showFavoritesOnly = false;
-  //   notifyListeners();
-  // }
-
-  void addProduct(Product product) {
-    final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        price: product.price,
-        description: product.description,
-        imageUrl: product.imageUrl);
-    _items.add(newProduct);
-    notifyListeners();
+  Future<void> addProduct(Product product) {
+    Uri url = Uri.parse(
+        'https://ir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
+    return post(url,
+        body: json.encode({
+          'title': product.title,
+          'price': product.price,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite
+        })).then((response) {
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          price: product.price,
+          description: product.description,
+          imageUrl: product.imageUrl);
+      _items.add(newProduct);
+      notifyListeners();
+    }).catchError((error) {
+      throw error;
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
@@ -76,9 +81,7 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       _items[prodIndex] = newProduct;
       notifyListeners();
-    } else {
-      print('...');
-    }
+    } else {}
   }
 
   void deleteProduct(String id) {

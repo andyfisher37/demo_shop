@@ -1,7 +1,5 @@
 import 'package:demo_shop/providers/cart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 class CartItem extends StatelessWidget {
@@ -46,13 +44,13 @@ class CartItem extends StatelessWidget {
       },
       background: Container(
         color: Colors.redAccent,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
         child: const Icon(
           Icons.delete,
           color: Colors.white,
           size: 35,
         ),
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 20),
       ),
       child: Card(
         margin: const EdgeInsets.all(7),

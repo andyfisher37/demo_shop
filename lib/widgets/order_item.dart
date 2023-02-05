@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import '../providers/orders.dart' as ord;
 import 'package:intl/intl.dart';
 
@@ -38,7 +36,7 @@ class _OrderItemState extends State<OrderItem> {
           ),
           if (_expanded)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
               height: min(widget.order.products.length * 20.0 + 20, 100),
               child: ListView(
                 children: widget.order.products
@@ -48,14 +46,14 @@ class _OrderItemState extends State<OrderItem> {
                         children: <Widget>[
                           Text(
                             prod.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             '${prod.quantity}x \$${prod.price}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color.fromARGB(255, 78, 1, 1),
                             ),
