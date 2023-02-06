@@ -9,6 +9,8 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _scaffoldMess = ScaffoldMessenger.of(context);
+
     return Consumer<Product>(
         builder: (ctx, product, child) => ClipRRect(
               borderRadius: BorderRadius.circular(10),
@@ -18,8 +20,16 @@ class ProductItem extends StatelessWidget {
                     icon: Icon(product.isFavorite
                         ? Icons.favorite
                         : Icons.favorite_border),
-                    onPressed: () {
-                      product.toggleFavoriteStatus();
+                    onPressed: () async {
+                      try {
+                        await product.toggleFavoriteStatus();
+                      } catch (error) {
+                        _scaffoldMess.showSnackBar(const SnackBar(
+                            content: Text(
+                          'Server error...',
+                          textAlign: TextAlign.center,
+                        )));
+                      }
                     },
                   ),
                   trailing: Consumer<Cart>(

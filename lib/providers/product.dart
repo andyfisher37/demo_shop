@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:demo_shop/models/http_exception.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -17,8 +21,25 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
+  void _setFavStatus(bool newVal) {
+    isFavorite = newVal;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
+    final Uri urlUpdate = Uri.parse(
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+
+    final response = await patch(urlUpdate,
+        body: json.encode({
+          'isFavorite': isFavorite,
+        }));
+    if (response.statusCode >= 400) {
+      _setFavStatus(oldStatus);
+      throw HttpException('Server error...');
+    }
   }
 }
