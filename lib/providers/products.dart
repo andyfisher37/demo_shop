@@ -5,9 +5,6 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 class Products with ChangeNotifier {
-  Uri url = Uri.parse(
-      'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
-
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -39,12 +36,11 @@ class Products with ChangeNotifier {
     // ),
   ];
 
-  //var _showFavoritesOnly = false;
+  final String authToken;
+
+  Products(this.authToken, this._items);
 
   List<Product> get items {
-    // if (_showFavoritesOnly) {
-    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
-    // }
     return [..._items];
   }
 
@@ -57,6 +53,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
+    final Uri url = Uri.parse(
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -82,6 +80,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
+    final Uri url = Uri.parse(
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await post(url,
           body: json.encode({
@@ -109,7 +109,7 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       try {
         final Uri urlUpdate = Uri.parse(
-            'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+            'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
         await patch(urlUpdate,
             body: json.encode({
               'title': newProduct.title,
@@ -127,7 +127,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final Uri urlDelete = Uri.parse(
-        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere(((prod) => prod.id == id));
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
