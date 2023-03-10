@@ -7,6 +7,7 @@ import 'package:demo_shop/screens/edit_product_screen.dart';
 import 'package:demo_shop/screens/orders_screen.dart';
 import 'package:demo_shop/screens/product_detail_screen.dart';
 import 'package:demo_shop/screens/user_products_screen.dart';
+import 'package:demo_shop/widgets/splash-screen.dart';
 import 'package:flutter/material.dart';
 import 'package:demo_shop/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
@@ -29,16 +30,20 @@ class MyApp extends StatelessWidget {
             create: (ctx) => Auth(),
           ),
           ChangeNotifierProxyProvider<Auth, Products>(
-            create: (ctx) => Products('', []),
-            update: (ctx, auth, previousProducts) => Products(auth.token!,
+            create: (ctx) => Products('', '', []),
+            update: (ctx, auth, previousProducts) => Products(
+                auth.token == null ? '' : auth.token ?? '',
+                auth.userId == null ? '' : auth.userId ?? '',
                 previousProducts == null ? [] : previousProducts.items),
           ),
           ChangeNotifierProvider(
             create: (ctx) => Cart(),
           ),
           ChangeNotifierProxyProvider<Auth, Orders>(
-            create: (ctx) => Orders('', []),
-            update: (ctx, auth, previousOrders) => Orders(auth.token!,
+            create: (ctx) => Orders('', '', []),
+            update: (ctx, auth, previousOrders) => Orders(
+                auth.token == null ? '' : auth.token ?? '',
+                auth.userId == null ? '' : auth.userId ?? '',
                 previousOrders == null ? [] : previousOrders.orders),
           ),
         ],
@@ -50,7 +55,16 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
                   .copyWith(secondary: Colors.blueGrey),
             ),
-            home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+            home: auth.isAuth
+                ? ProductsOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (ctx, authResultSnapshot) =>
+                        authResultSnapshot.connectionState ==
+                                ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen(),
+                  ),
             routes: {
               ProductDetailScreen.routeName: (context) =>
                   const ProductDetailScreen(),

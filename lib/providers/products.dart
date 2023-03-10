@@ -5,62 +5,46 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 class Products with ChangeNotifier {
-  List<Product> _items = [
-    // Product(
-    //   id: 'p1',
-    //   title: 'Red Shirt',
-    //   description: 'A red shirt - it is pretty red!',
-    //   price: 29.99,
-    //   imageUrl: 'https://m.media-amazon.com/images/I/61oC5CPd7eL._UX679_.jpg',
-    // ),
-    // Product(
-    //   id: 'p2',
-    //   title: 'Trousers',
-    //   description: 'A nice pair of trousers.',
-    //   price: 59.99,
-    //   imageUrl: 'https://m.media-amazon.com/images/I/61yRUBQInKL._UX679_.jpg',
-    // ),
-    // Product(
-    //   id: 'p3',
-    //   title: 'Yellow Scarf',
-    //   description: 'Warm and cozy - exactly what you need for the winter.',
-    //   price: 19.99,
-    //   imageUrl: 'https://m.media-amazon.com/images/I/81mVtWb8BWL._UX679_.jpg',
-    // ),
-    // Product(
-    //   id: 'p4',
-    //   title: 'A Pan',
-    //   description: 'Prepare any meal you want.',
-    //   price: 49.99,
-    //   imageUrl: 'https://m.media-amazon.com/images/I/5144RhX7CvS._SX679_.jpg',
-    // ),
-  ];
+  // List of products
+  List<Product> _items = [];
 
+  // authorization user token
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  // Products constructor
+  Products(this.authToken, this.userId, this._items);
 
+  // Get the list of products
   List<Product> get items {
     return [..._items];
   }
 
+  // Get the favorite products
   List<Product> get favoriteItems {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
+  // Find product by Id
   Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
+  // Update from base list of products...
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final Uri url = Uri.parse(
-        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
     try {
       final response = await get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
+      final favoriteRes = await get(Uri.parse(
+          'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken'));
+      final favoriteData = json.decode(favoriteRes.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -69,7 +53,8 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavorite: prodData['isFavorite'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
         _items = loadedProducts;
         notifyListeners();
@@ -79,6 +64,7 @@ class Products with ChangeNotifier {
     }
   }
 
+  // Add product to list of products
   Future<void> addProduct(Product product) async {
     final Uri url = Uri.parse(
         'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
@@ -89,7 +75,7 @@ class Products with ChangeNotifier {
             'price': product.price,
             'description': product.description,
             'imageUrl': product.imageUrl,
-            'isFavorite': product.isFavorite
+            'creatorId': userId,
           }));
       final newProduct = Product(
           id: json.decode(response.body)['name'],

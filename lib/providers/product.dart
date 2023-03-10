@@ -26,17 +26,14 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus(String authToken) async {
+  Future<void> toggleFavoriteStatus(String authToken, String userId) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     final Uri urlUpdate = Uri.parse(
-        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
+        'https://fir-shop-3ba2c-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$authToken');
 
-    final response = await patch(urlUpdate,
-        body: json.encode({
-          'isFavorite': isFavorite,
-        }));
+    final response = await put(urlUpdate, body: json.encode(isFavorite));
     if (response.statusCode >= 400) {
       _setFavStatus(oldStatus);
       throw HttpException('Server error...');
