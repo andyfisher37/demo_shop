@@ -13,24 +13,35 @@ class ProductDetailScreen extends StatelessWidget {
     final loadedProduct = Provider.of<Products>(context, listen: false)
         .findById(productId.toString());
     return Scaffold(
-      appBar: AppBar(title: Text(loadedProduct.title)),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(
-                loadedProduct.imageUrl,
-                fit: BoxFit.cover,
+      //appBar: AppBar(title: Text(loadedProduct.title)),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(loadedProduct.title),
+              background: Hero(
+                tag: loadedProduct.id,
+                child: Image.network(
+                  loadedProduct.imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
+          ),
+          SliverList(
+              delegate: SliverChildListDelegate([
             const SizedBox(height: 10),
+            // Price of current product
             Text(
               '\$${loadedProduct.price}',
-              style: const TextStyle(fontSize: 20, color: Colors.grey),
+              style: const TextStyle(
+                  fontSize: 20, color: Color.fromARGB(255, 35, 35, 35)),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
+            // Description of current product
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -39,9 +50,13 @@ class ProductDetailScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),
-            )
-          ],
-        ),
+            ),
+            const SizedBox(height: 800),
+            // Container(
+            //   height: 300,
+            //   width: double.infinity,
+          ])),
+        ],
       ),
     );
   }

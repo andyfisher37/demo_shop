@@ -1,3 +1,4 @@
+import 'package:demo_shop/helpers/custom_route.dart';
 import 'package:demo_shop/providers/cart.dart';
 import 'package:demo_shop/providers/orders.dart';
 import 'package:demo_shop/providers/product.dart';
@@ -52,6 +53,10 @@ class MyApp extends StatelessWidget {
             title: 'Demo Shop',
             theme: ThemeData(
               fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              }),
               colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
                   .copyWith(secondary: Colors.blueGrey),
             ),

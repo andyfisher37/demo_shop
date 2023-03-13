@@ -1,3 +1,4 @@
+import 'package:demo_shop/helpers/custom_route.dart';
 import 'package:demo_shop/providers/auth.dart';
 import 'package:demo_shop/screens/orders_screen.dart';
 import 'package:demo_shop/screens/user_products_screen.dart';
@@ -31,6 +32,9 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(OrdersScreen.routeName);
+              // Navigator.of(context).pushReplacement(CustomRoute(
+              //   builder: (ctx) => const OrdersScreen(),
+              // ));
             },
           ),
           const Divider(),
