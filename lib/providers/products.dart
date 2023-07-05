@@ -60,7 +60,7 @@ class Products with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -86,7 +86,7 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       notifyListeners();
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
@@ -106,7 +106,7 @@ class Products with ChangeNotifier {
         _items[prodIndex] = newProduct;
         notifyListeners();
       } catch (error) {
-        throw error;
+        rethrow;
       }
     } else {}
   }
